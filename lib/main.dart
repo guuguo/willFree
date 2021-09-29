@@ -3,9 +3,7 @@ import 'package:free/global/custom/my_theme.dart';
 import 'package:free/global/global_model.dart';
 import 'package:free/global/options_model.dart';
 import 'package:free/page/home/home.dart';
-import 'package:free/page/upload/upload.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,7 +19,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<OptionsModel>(
           builder: (context, v, c) => MaterialApp(
-                title: '谷果之家',
+                title: '自由之路',
                 theme: kLightDiaryTheme.data,
                 darkTheme: kDarkDiaryTheme.data,
                 home: MyHomePage()),

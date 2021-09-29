@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:free/global/global_model.dart';
-import 'package:free/page/home/model.dart';
 import 'package:free/page/home/view/login.dart';
-import 'package:free/page/upload/upload.dart';
 import 'package:free/theme/bg.dart';
 import 'package:free/widget/simple_widget.dart';
 import 'package:provider/provider.dart';
@@ -83,11 +81,7 @@ class GradientBgContainer extends StatelessWidget {
             child: IconButton(
                 iconSize: 30,
                 onPressed: () async {
-                  final res = await Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => UploadPage()));
-                  if (res == true) {
-                    Provider.of<HomeModel>(context,listen: false).refresh();
-                  }
+
                 },
                 icon: Icon(
                   CupertinoIcons.cloud_upload_fill,

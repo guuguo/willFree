@@ -6,12 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:free/bean/entity/article_entity.dart';
 import 'package:free/global/global_model.dart';
-import 'package:free/page/article/artical_page.dart';
 import 'package:free/page/home/model.dart';
 import 'package:free/page/home/view/banner.dart';
 import 'package:free/page/home/view/foot.dart';
 import 'package:free/page/home/view/profile.dart';
-import 'package:free/page/upload/upload.dart';
 import 'package:free/theme/bg.dart';
 import 'package:free/utils/date.dart';
 import 'package:free/widget/container.dart';
@@ -36,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
           create: (c) => HomeModel(),
           builder: (c, chi) => Center(
                 child: LayoutBuilder(builder: (context, constraints) {
-                  final width = constraints.maxWidth ?? 0;
+                  final width = constraints.maxWidth ;
                   ///根据宽度获取不同的Screen
                   return judgePageWithScreenWidth(width);
                 }),
@@ -124,10 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildArticleItem(BuildContext context, ArticleEntity item) {
     return GestureDetector(
         onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ArticlePage(
-                    article: item,
-                  )));
+
         },
         child: Hero(
           tag: item.objectId ?? "",
@@ -190,10 +185,6 @@ class _MyHomePageState extends State<MyHomePage> {
       offstage: !v.isAdmin(),
       child: IconButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => UploadPage(
-                article: item,
-              )));
         },
         icon: Icon(CupertinoIcons.square_pencil_fill),
       ),
