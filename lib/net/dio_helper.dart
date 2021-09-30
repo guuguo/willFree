@@ -58,7 +58,7 @@ class DioHelper {
 
   static DioHelper? _instance;
 
-  static DioHelper get() {
+  static DioHelper instance() {
     if (DioHelper._instance == null) {
       DioHelper._instance = DioHelper._();
     }
@@ -289,7 +289,7 @@ class DioHelper {
       debug(url, tag: "url");
       debug(params, tag: "参数");
       throw e;
-    }) as FutureOr<Response<Map<dynamic, dynamic>>>))!;
+    }) as FutureOr<Response<Map<dynamic, dynamic>>>));
 
     return response;
   }

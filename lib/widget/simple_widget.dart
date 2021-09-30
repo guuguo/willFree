@@ -14,7 +14,7 @@ class RoundedImage extends StatelessWidget {
     BoxFit? fit,
     required String imageUrl,
   }) : image = Image.network(
-          imageUrl ?? '',
+          imageUrl,
           width: width ?? (roundWidth(radius)),
           height: height ?? (roundWidth(radius)),
           fit: fit,

@@ -3,31 +3,23 @@ import 'package:free/bean/entity/article_entity.dart';
 import 'package:free/bean/res_bean.dart';
 import 'package:free/repository/net_repository.dart';
 import 'package:free/utils/developer.dart';
+import 'package:intl/intl.dart';
 
 class HomeModel extends ChangeNotifier {
-  List<ArticleEntity> list = [];
+  double nationNalDebtRatio=0;
 
   HomeModel() {
-    refresh();
+    getDebt();
   }
 
   var loading=false;
-  Future refresh() async {
+  Future getDebt() async {
     loading=true;
     notifyListeners();
     try {
-      ResListBean<ArticleEntity> res = await NetRepository.getArticle();
+      final currentDate= DateFormat('yyyy-MM-dd').format(DateTime.now());
+      dynamic res = await NetRepository.getNationNalDebtRatio(currentDate);
       loading=false;
-      list = res.results;
-    } catch (e) {
-      debug(e);
-    }
-    notifyListeners();
-  }
-  Future delete(ArticleEntity article) async {
-    try {
-      await NetRepository.deleteArticle(article);
-      list.remove(article);
     } catch (e) {
       debug(e);
     }
