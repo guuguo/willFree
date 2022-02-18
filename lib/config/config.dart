@@ -1,5 +1,5 @@
 //var baseUrl = "https://lean.guuguo.top/1.1";
-var baseUrl = "https://gzGzoHsz.lc-cn-n1-shared.com/1.1";
+var baseUrl = "";
 
 ///qq登录APP id
 const qqAppId = '1108044719';

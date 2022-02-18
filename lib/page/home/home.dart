@@ -1,18 +1,14 @@
 import 'dart:ui';
 
-import 'package:another_flushbar/flushbar.dart';
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:free/bean/entity/article_entity.dart';
-import 'package:free/global/global_model.dart';
 import 'package:free/page/home/model.dart';
-import 'package:free/page/home/view/banner.dart';
-import 'package:free/page/home/view/foot.dart';
-import 'package:free/page/home/view/profile.dart';
+import 'package:free/page/home/view/NationnalDebt.dart';
+import 'package:free/page/home/view/PE.dart';
+import 'package:free/page/home/view/Stock.dart';
+import 'package:free/page/view/card.dart';
 import 'package:free/theme/bg.dart';
-import 'package:free/utils/date.dart';
-import 'package:free/widget/container.dart';
+import 'package:free/widget/state_view/state_view.dart';
 import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -28,45 +24,31 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      decoration: BoxDecoration(gradient: MyGradient.bgScaffold(context)),
-      child: ChangeNotifierProvider(
+        body: SafeArea(
+      child: Container(
+        decoration: BoxDecoration(gradient: MyGradient.bgScaffold(context)),
+        child: ChangeNotifierProvider(
           create: (c) => HomeModel(),
-          builder: (c, chi) => Center(
-                child: LayoutBuilder(builder: (context, constraints) {
-                  final width = constraints.maxWidth ;
-                  ///根据宽度获取不同的Screen
-                  return judgePageWithScreenWidth(width);
-                }),
-              )),
+          builder: (c, chi) => Consumer<HomeModel>(
+              builder: (ctx, v, c) => StateView(
+                  state: v.widgetState,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      NationnalDebt(),
+                      PE(),
+                      ...v.stocks.map((e) =>Stock(stock: e)),
+                      addButton(),
+                    ],
+                  ))),
+        ),
+      ),
     ));
   }
 
-  Widget judgePageWithScreenWidth(double width) {
-    return width > 1100
-                    ? buildBigScreenHomeContent()
-                    : Column(
-                        children: [Expanded(child: buildContent(1)), Footer()],
-                      );
-  }
-
-  Widget buildBigScreenHomeContent() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        buildContent(),
-        SizedBox(
-          width: 300,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SideCard(),
-              ProfileCard(),
-            ],
-          ),
-        ),
-      ],
+  Widget addButton() {
+    return MainCard(
+      child: Container(child: Icon(Icons.add)),
     );
   }
 
@@ -78,18 +60,16 @@ class _MyHomePageState extends State<MyHomePage> {
           return Text((value.nationNalDebtRatio).toString());
         }));
   }
+
   ///空布局
   Widget buildEmpty() {
     return Center(child: Text("没有找到数据"));
   }
 
   Widget buildLoading() {
-    return Container(padding: EdgeInsets.only(bottom: 40, top: 20), child: CupertinoActivityIndicator());
-  }
-
-
-  Widget buildBanner() {
-    return GradientBgContainer();
+    return Container(
+        padding: EdgeInsets.only(bottom: 40, top: 20),
+        child: CupertinoActivityIndicator());
   }
 }
 

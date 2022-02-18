@@ -6,7 +6,7 @@ import 'dart:developer' as developer;
 bool inProduction = const bool.fromEnvironment("dart.vm.product");
 
 debug(Object? msg,
-    {String tag = '久忆日记',
+    {String tag = '自由',
     Object? error,
     StackTrace? stackTrace,
     Zone zone = Zone.root,
@@ -21,7 +21,7 @@ debug(Object? msg,
     } else {
       message = msg?.toString();
     }
-    developer.log(message!,
+    developer.log(message??"打印数据为空了",
         name: tag, level: 0, zone: zone, error: error, stackTrace: stackTrace);
   }
 }

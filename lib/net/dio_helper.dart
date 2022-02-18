@@ -12,6 +12,8 @@ import 'package:path_provider/path_provider.dart';
 import '../config/config.dart';
 import 'package:path/path.dart' as path;
 
+import 'intercepters/log_interceptors.dart';
+
 ///缓存的超时时间
 const String _OPTIONS_CACHE_AGE = "OPTIONS_CACHE_AGE";
 
@@ -80,7 +82,7 @@ class DioHelper {
           options.headers["Authorization"] = Authorization;
           handler.next(options);
         },
-        onResponse: _onResponse));
+        ));
     return _ossdio!;
   }
 
@@ -92,66 +94,17 @@ class DioHelper {
       ..connectTimeout = 20000
       ..receiveTimeout = 8000;
 
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
-        // ignore: prefer_single_quotes
-        final master = options.data != null ? options.data['isMasterKey'] : false;
-        final time = DateTime.now().millisecond;
-
-        ///移除isMasterKey
-        if (options.data != null && options.data is Map) options.data.remove('isMasterKey');
-
-        ///isMasterKey的时候使用masterKey
-        String sign;
-        if (master != null && master == true) {
-          sign = '${generateMd5('$time${apiInfo['masterKey']}')},$time,master';
-        } else {
-          sign = '${generateMd5('$time${apiInfo['key']}')},$time';
-        }
-        options.headers['X-LC-Sign'] = sign;
-        options.headers['X-LC-Id'] = apiInfo['appId'];
-        options.headers['X-LC-Session'] = GlobalModel.get()!.user?.sessionToken ?? '';
-        if (apiGetLogEnable) {
-          debug('╭┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╮');
-          debug('┆ ${options.method} ┈>:  ${options.baseUrl}${options.path}');
-          options.data == null ? 1 : debug('┆data ┈>:  ${options.data}');
-          options.headers == null ? 1 : debug('┆headers ┈>:  ${options.headers}');
-          options.queryParameters == null ? 1 : debug('┆queryParameters ┈>:  ${options.queryParameters}');
-          debug('╰┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╯');
-        }
-        handler.next(options);
-      },
-    ));
-    _dio.interceptors.add(InterceptorsWrapper(onRequest: _onRequest, onResponse: _onResponse));
+    _dio.interceptors.add(LogsInterceptors(_dio));
   }
-
-  InterceptorSendCallback _onRequest = (opt, handler) {
-    if (apiRequestLogPrint) {
-      debug('request url: ${opt.uri}', tag: _TAG);
-      debug('request param: ${opt.data}', tag: _TAG);
-      debug('request header: ${JsonEncoder.withIndent(' ').convert(opt.headers)}', tag: _TAG);
-      debug('request parameters: ${opt.queryParameters}', tag: _TAG);
-    }
-    handler.next(opt);
-  };
-
-  InterceptorSuccessCallback _onResponse = (response, handler) {
-    final options = response.requestOptions;
-    debug('╔════════════════════════════════════════════════════════════════════════════════════════════════════════╗', tag: _TAG);
-    debug('║${options.method} ══>:  ${options.baseUrl}${options.path}', tag: _TAG);
-    options.headers == null ? 1 : debug('║headers ══>:  ${options.headers}', tag: _TAG);
-    options.queryParameters == null ? 1 : debug('║queryParameters ══>:  ${options.queryParameters}', tag: _TAG);
-    options.data == null ? 1 : debug('║parameters ══>:  ${options.data}');
-    debug('║══>:  ${jsonFormat ? JsonEncoder.withIndent(' ').convert(response.data) : response.data}', tag: _TAG);
-    debug('╚════════════════════════════════════════════════════════════════════════════════════════════════════════╝', tag: _TAG);
-    handler.next(response);
-  };
-
-  Future<String?> fetchString(String url) async {
-    final res = await _dio.get<String>(url);
+  static Dio get dio=>instance()._dio;
+  Future<String?> fetchString(String url,{String? method}) async {
+    final res = await _dio.get<String>(url,options:Options(method: method));
     return res.data;
   }
-
+  /// Handy method to make http GET request, which is a alias of  [dio.fetch(RequestOptions)].
+  Future<Response<T>> dioFetch<T>(RequestOptions requestOptions){
+    return _dio.fetch<T>(requestOptions);
+  }
   Future<Response> download(String url, {String? savePath}) async {
     if (savePath == null) {
       savePath = await getSaveCachePath();
@@ -241,7 +194,7 @@ class DioHelper {
     ProgressCallback? receiveCallBack,
     Options? requestOptions,
   ) async {
-    Response<Map> response;
+    Response<dynamic> response;
     Future? _netRequest;
     switch (method) {
       case NetMethod.get:
@@ -284,14 +237,16 @@ class DioHelper {
       default:
         break;
     }
-    response = (await (_netRequest?.catchError((e) {
+    response = await _netRequest?.catchError((e) {
       debug(e, tag: "网络请求出错了", stackTrace: e.stackTrace);
+      if (e is DioError && e.type == DioErrorType.other) {
+        debug(e.response.toString(), tag: "请求返回结果");
+      }
       debug(url, tag: "url");
       debug(params, tag: "参数");
       throw e;
-    }) as FutureOr<Response<Map<dynamic, dynamic>>>));
-
-    return response;
+    });
+    return response as FutureOr<Response<Map<dynamic, dynamic>>>;
   }
 }
 
