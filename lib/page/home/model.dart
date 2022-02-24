@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:free/bean/stock_bean.dart';
+import 'package:free/page/home/view/Stock.dart';
 import 'package:free/repository/net_repository.dart';
 import 'package:free/utils/developer.dart';
 import 'package:free/widget/state_view/state_view.dart';
@@ -13,7 +14,7 @@ class HomeModel extends ChangeNotifier {
 
   List<StockBean> stocks = [];
 
-  var initStock = ["603587", "600566"];
+  var initStock = ["603587", "600566", "601019"];
 
   HomeModel() {
     initLoading();
@@ -30,6 +31,15 @@ class HomeModel extends ChangeNotifier {
       getStockInfos(),
     ]);
     widgetState = WidgetState.content;
+    notifyListeners();
+  }
+
+  ///刷新所有股票
+  Future<void> refreshStocksPrice() async {
+    for (var stock in stocks) {
+      var price = await NetRepository.getStockPrice(stock.code);
+      stock.priceDetail = price;
+    }
     notifyListeners();
   }
 
@@ -64,6 +74,7 @@ class HomeModel extends ChangeNotifier {
       for (var code in initStock) {
         final stock = await NetRepository.getStockFinance(code);
         if (stock == null) {
+          stocks.add(StockBean.init(code));
           continue;
         }
         final price = await NetRepository.getStockPrice(code);

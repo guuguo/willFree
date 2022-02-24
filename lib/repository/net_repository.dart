@@ -60,9 +60,9 @@ class NetRepository {
     }
   }  ///获取价格信息
   static Future<StockPrice?> getStockPrice(String code) async {
-    var res = await DioHelper.dio
-        .get<String>("https://d.10jqka.com.cn/v2/realhead/hs_${code}/last.js");
     try {
+      var res = await DioHelper.dio
+        .get<String>("https://d.10jqka.com.cn/v2/realhead/hs_${code}/last.js");
       var bean = StockPrice();
       RegExpMatch? resJson=RegExp(r"{.*}").firstMatch(res.data??"");
       var map=json.decode(resJson?.group(0)??"")["items"];

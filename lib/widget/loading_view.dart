@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoadingView extends StatelessWidget {
-  final Widget? child;
+  final Widget child;
   final bool isLoading;
   final String loadingText;
   LoadingView({
     Key? key,
-    @required this.child,
+    required this.child,
     this.isLoading = false,
     this.loadingText = '加载中...',
   }) : super(key: key);
 
-  _buildSpin(BuildContext context) {
+  List<Widget> _buildSpin(BuildContext context) {
     return [
       child,
       isLoading

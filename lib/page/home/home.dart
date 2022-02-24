@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:free/page/home/model.dart';
@@ -26,21 +27,45 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         body: SafeArea(
       child: Container(
+        height: double.infinity,
         decoration: BoxDecoration(gradient: MyGradient.bgScaffold(context)),
         child: ChangeNotifierProvider(
           create: (c) => HomeModel(),
           builder: (c, chi) => Consumer<HomeModel>(
-              builder: (ctx, v, c) => StateView(
-                  state: v.widgetState,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+              builder: (ctx, v, c) => Stack(
                     children: [
-                      NationnalDebt(),
-                      PE(),
-                      ...v.stocks.map((e) =>Stock(stock: e)),
-                      addButton(),
+                      StateView(
+                          state: v.widgetState,
+                          child: SingleChildScrollView(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                NationnalDebt(),
+                                PE(),
+                                ...v.stocks.map((e) => Stock(stock: e)),
+                                addButton(),
+                              ],
+                            ),
+                          )),
+                      Positioned(
+                          right: 20,
+                          bottom: 20,
+                          child: FloatingActionButton(
+                            onPressed: () async{
+                              var fb = Flushbar(
+                                showProgressIndicator: true,
+                                message: "刷新中",
+                              )..show(context);
+                              await v.refreshStocksPrice();
+                              Future.delayed(Duration(milliseconds:600),(){
+                                fb.dismiss();
+                              });
+                            },
+                            child: Icon(Icons.refresh, color: Colors.white),
+                          )),
                     ],
-                  ))),
+                  )),
         ),
       ),
     ));

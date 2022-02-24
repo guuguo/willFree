@@ -19,12 +19,7 @@ class Stock extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    stock.code,
-                    style: Theme.of(context).textTheme.caption,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    stock.name,
+                    "${stock.name} (${stock.code})",
                     style: Theme.of(context).textTheme.caption,
                     textAlign: TextAlign.center,
                   ),

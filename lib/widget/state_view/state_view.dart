@@ -12,12 +12,12 @@ class StateView extends StatelessWidget {
       desc: "出错了",
     ),
     this.loadingView = const Expanded(child: Center(child: CupertinoActivityIndicator())),
-    this.child,
+    required this.child,
   }) {}
 
   Widget errorView;
   Widget loadingView;
-  Widget? child;
+  Widget child;
   Widget emptyView;
   WidgetState state;
 
@@ -36,7 +36,7 @@ class StateView extends StatelessWidget {
           isLoading: true,
         );
       case WidgetState.content:
-        return child ?? SizedBox();
+        return child;
     }
   }
 }
