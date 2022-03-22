@@ -3,6 +3,7 @@ import 'package:free/global/custom/my_theme.dart';
 import 'package:free/global/global_model.dart';
 import 'package:free/global/options_model.dart';
 import 'package:free/page/home/home.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (c) => OptionsModel()),
       ],
       child: Consumer<OptionsModel>(
-          builder: (context, v, c) => MaterialApp(
+          builder: (context, v, c) => GetMaterialApp(
                 title: '自由之路',
                 theme: kLightDiaryTheme.data,
                 darkTheme: kDarkDiaryTheme.data,

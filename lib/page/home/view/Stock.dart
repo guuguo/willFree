@@ -12,30 +12,39 @@ class Stock extends StatelessWidget {
   }) : super(key: key);
   final StockBean stock;
 
+  Color mainColor() {
+    if (stock.priceDetail?.pricePlus.startsWith("-") == true) {
+      return Colors.green.shade600;
+    } else {
+      return Colors.red.shade700;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<HomeModel>(
         builder: (ctx, v, c) => MainCard(
+              margin: EdgeInsets.symmetric(vertical: 10),
               child: Column(
                 children: [
                   Text(
                     "${stock.name} (${stock.code})",
-                    style: Theme.of(context).textTheme.caption,
+                    style: Theme.of(context).textTheme.caption?.copyWith(color: mainColor()),
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    stock.priceDetail?.currentPrice.toString()??"",
-                    style: Theme.of(context).textTheme.headline2,
+                    stock.priceDetail?.currentPrice.toString() ?? "",
+                    style: Theme.of(context).textTheme.headline2?.copyWith(color: mainColor()),
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    stock.priceDetail?.pricePlus??"",
-                    style: Theme.of(context).textTheme.bodyText1,
+                    stock.priceDetail?.pricePlus ?? "",
+                    style: Theme.of(context).textTheme.bodyText1?.copyWith(color: mainColor()),
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    "TTM市盈率:${stock.priceDetail?.ttm??""}",
-                    style: Theme.of(context).textTheme.bodyText1,
+                    "TTM市盈率:${stock.priceDetail?.ttm ?? ""}",
+                    style: Theme.of(context).textTheme.bodyText1?.copyWith(color: mainColor()),
                     textAlign: TextAlign.center,
                   ),
                 ],

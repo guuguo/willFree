@@ -25,6 +25,16 @@ final DiaryTheme kLightDiaryTheme = DiaryTheme._('Light', ThemeMode.light, _buil
 final kCupertinoLightTheme = _buildCupertinoLightTheme();
 final kCupertinoDarkTheme = _buildCupertinoDarkTheme();
 
+T adaptWidth<T>(BuildContext context, {required T lValue, T? mValue, T? sValue}) {
+  mValue = mValue ?? lValue;
+  sValue = sValue ?? mValue;
+  if (MediaQuery.of(context).size.width > 1200) {
+    return lValue;
+  } else {
+    return (MediaQuery.of(context).size.width > 615 ? mValue! : sValue!);
+  }
+}
+
 TextTheme _buildTextTheme(TextTheme base, [Color? color]) {
   return base.apply(bodyColor: color).copyWith(
         subtitle1: base.subtitle1!.copyWith(fontFamily: 'GoogleSans'),

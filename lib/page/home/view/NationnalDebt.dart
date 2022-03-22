@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:free/page/home/model.dart';
 import 'package:free/page/view/card.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+
+import '../../test/test.dart';
 
 class NationnalDebt extends StatelessWidget {
   const NationnalDebt({
